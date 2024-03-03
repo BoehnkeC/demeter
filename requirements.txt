@@ -1,0 +1,4 @@
+fiona
+pystac-client
+shapely
+ukis-pysat[raster]

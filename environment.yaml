@@ -1,0 +1,11 @@
+name: demeter
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - fiona
+      - pystac-client
+      - shapely
+      - ukis-pysat[raster]
