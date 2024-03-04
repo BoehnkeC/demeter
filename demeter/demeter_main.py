@@ -3,9 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from . import aoi_check
-from . import burnt_area_mapper
-from . import data_retrieval
+import aoi_check
+import burnt_area_mapper
+import data_retrieval
 
 if TYPE_CHECKING:
     from types import TracebackType

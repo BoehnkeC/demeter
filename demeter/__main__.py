@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import argparse
 
-from . import demeter_main
+import demeter_main
 
 SCRATCH_IN = r"/scratch/in"
 SCRATCH_OUT = r"/scratch/out"
