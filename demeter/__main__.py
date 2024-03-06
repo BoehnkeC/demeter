@@ -1,4 +1,5 @@
 """Docker entry point of application."""
+
 from __future__ import annotations
 
 import argparse
@@ -31,7 +32,9 @@ def run() -> int:
 
     in_dir, out_dir = check_directories(args.in_dir, args.out_dir)
 
-    with demeter_main.Demeter(in_dir=in_dir, out_dir=out_dir, start_date=args.start_date, end_date=args.end_date, cloud_cover=float(args.cloud_cover)) as demeter:
+    with demeter_main.Demeter(
+        in_dir=in_dir, out_dir=out_dir, start_date=args.start_date, end_date=args.end_date
+    ) as demeter:
         demeter.execute(aoi=args.aoi_data)
 
     return 0
@@ -57,13 +60,6 @@ def parse_commandline_args(args: list[str] | None = None) -> argparse.Namespace:
         help="End of the event, as YYYY-MM-DD, like 2020-11-02",
         metavar="YYYY-MM-DD",
         required=True,
-    )
-    parser.add_argument(
-        "--cloud_cover",
-        help="Cloud cover of the Sentinel-2 scene, in range [0, 1], like 0.2. Default is 1.0",
-        metavar="CLOUD",
-        default=1.0,
-        required=False,
     )
     parser.add_argument(
         "--in_dir",

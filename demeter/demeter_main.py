@@ -14,7 +14,9 @@ if TYPE_CHECKING:
 class Demeter:
     """Encapsulate main methodology."""
 
-    def __init__(self: Demeter, in_dir: str, out_dir: str, start_date: str = "2023-01-01", end_date: str = "2023-01-10", cloud_cover: float = 1.0) -> None:
+    def __init__(
+        self: Demeter, in_dir: str, out_dir: str, start_date: str = "2023-01-01", end_date: str = "2023-01-10"
+    ) -> None:
         """Initialize Demeter class."""
         self.aoi = None
         self.in_dir = Path(in_dir)
@@ -24,7 +26,6 @@ class Demeter:
         self.items = None
         self.start_date = start_date
         self.end_date = end_date
-        self.cloud_cover = cloud_cover
 
     def __enter__(self: Demeter) -> Demeter:
         """Get opening handler on context manager."""
@@ -43,7 +44,9 @@ class Demeter:
         with aoi_check.AOI(data_dir=self.in_dir, data=aoi) as aoi:
             self.aoi = aoi.geometry
 
-            with data_retrieval.DataRetrieval(aoi=self.aoi, out_dir=self.out_dir, start_date=self.start_date, end_date=self.end_date, cloud_cover=self.cloud_cover) as _data:
+            with data_retrieval.DataRetrieval(
+                aoi=self.aoi, out_dir=self.out_dir, start_date=self.start_date, end_date=self.end_date
+            ) as _data:
                 _data.get_data()
 
             with burnt_area_mapper.BurntAreaMapper(out_dir=self.out_dir, aoi=self.aoi) as bam:

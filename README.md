@@ -2,15 +2,27 @@ Welcome to **Demeter**, a package for detecting burnt areas based on satellite i
 
 # Quickstart
 
+## Workflow
+
+The workflow of the algorithm is as follows:
+
+- Define an AOI as a vector file, shapely Polygon or WKT.
+- Define a start and ending date of the wildfire event.
+- The algorithm automatically checks and downloads Sentinel-2 data from an AWS STAC catalog.
+- In order to fully capture the event, the algorithm automatically re-assigns the start and end date to earlier and later dates before and after the event, based on the availability of data.
+- The downloaded data is fed into a burnt area algorithm.
+
 ## Docker
 
 Call the docker container with the following arguments:
 
 ```shell
-docker run --rm -v /path/to/local/data/in/:/scratch/in/ -v /path/to/local/data/out/:/scratch/out/ demeter --aoi_data aoi_file.gpkg --start_date 2023-03-05 --end_date 2023-03-19 --cloud_cover 0.5
+docker run --rm -v /path/to/local/data/in/:/scratch/in/ -v /path/to/local/data/out/:/scratch/out/ demeter --aoi_data aoi_file.gpkg --start_date 2023-03-05 --end_date 2023-03-19
 ```
 
 The directory `/path/to/local/data/in` must exist in the file system and may hold the AOI file. The directory `/path/to/local/data/out` will be created if not yet existing and stores downloaded Sentinel-2 imagery and the results in TIFF format.
+
+The docker container was tested on Ubuntu 22.04.
 
 ## CLI
 
@@ -30,11 +42,25 @@ options:
                         Begin of the event, as YYYY-MM-DD, like 2020-11-01
   --end_date YYYY-MM-DD
                         End of the event, as YYYY-MM-DD, like 2020-11-02
-  --cloud_cover CLOUD   Cloud cover of the Sentinel-2 scene, in range [0, 1],
-                        like 0.2. Default is 1.0
   --in_dir In           Path to input directory holding AOI file. Overrides Docker input.
   --out_dir OUT         Path to output directory. Overrides Docker output.
 ```
+
+The CLI was tested on Ubuntu 22.04 and Windows 10.
+
+## Results
+
+#### Pre-fire NBR
+
+<img src="docs/pre_nbr.png" width="300">
+
+#### Post-fire NBR
+
+<img src="docs/post_nbr.png" width="300">
+
+#### NBR difference
+
+<img src="docs/dnbr.png" width="300">
 
 # Installation
 
@@ -44,7 +70,7 @@ Clone the repository.
 git clone git@github.com:BoehnkeC/demeter.git
 ```
 
-Build the docker container.
+Build the docker container if on Ubuntu.
 
 ```shell
 docker build -t demeter .
@@ -56,17 +82,23 @@ The algorithm applies the difference in Normalized Burn Ratio described by [UN-S
 
 > The Normalized Burn Ratio (NBR) is an index designed to highlight burnt areas in large fire zones. The formula is similar to NDVI, except that the formula combines the use of both near infrared (NIR) and shortwave infrared (SWIR) wavelengths.
 
-# # Caveats
 
-## Sentinel-2 overpasses
 
-Areas of interest may not be fully covered by one Sentinel-2 scene. One or more Sentinel-2 scenes from neighboring overpasses should be merged in order to create pre- and post-event mosaics. The code should cover the case where two neighboring tiles were recorded on two different dates, i.e. pre- and post-midnight.
+# Caveats
 
-## Thresholding
+### Overpasses
 
-In the current state, the results show continous data. The results could be classified according to [UN-SPIDER](https://un-spider.org/advisory-support/recommended-practices/recommended-practice-burn-severity/in-detail/normalized-burn-ratio).
+Only download data that captures the AOI not only the data for the closest date.
 
-![severity_level.PNG](severity_level.PNG)
+### Present data
+
+Check for data already downloaded saving computation time and limiting requests.
+
+### Thresholding
+
+In the current state, the results show continuous data. The results could be classified according to [UN-SPIDER](https://un-spider.org/advisory-support/recommended-practices/recommended-practice-burn-severity/in-detail/normalized-burn-ratio), despite the typo for not scaled Unburned.
+
+![severity_level.PNG](docs/severity_level.PNG)
 
 # Development
 
